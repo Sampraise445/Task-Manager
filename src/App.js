@@ -1,23 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import './Style.css'
+import { useEffect, useState } from "react";
+import ProgressTracker from "./component/ProgressTracker";
+import TaskForm from "./component/TaskForm";
+import TaskList from "./component/TaskList";
+
 
 function App() {
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  });
+
+  const addTask = (task) => {
+    setTasks([...tasks, task]);
+  };
+
+  const updateTask = (updatedTask, index) => {
+    const newtask = [...tasks];
+    newtask[index] = updatedTask;
+    setTasks(newtask);
+  };
+
+  const deleteTask = (index) => {
+    setTasks(tasks.filter((_, i) => i !== index));
+  };
+
+  const clearTasks = () => {
+    setTasks([])
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+      <header >
+        <h1 className="title">Task Bro</h1>
+        <p className="tagline">your friendly task Manager</p>
       </header>
+      <TaskForm addTask={addTask} />
+      <TaskList tasks={tasks} updateTask={updateTask} deleteTask={deleteTask} />
+      <ProgressTracker tasks = {tasks} />
+
+{tasks.length>0 && ( <button className='clear-btn' onClick={clearTasks}>Clear All Tasks</button>)}
+     
     </div>
   );
 }
